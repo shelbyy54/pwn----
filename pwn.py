@@ -42,14 +42,15 @@ fileProtectionInformationDict: dict[str, str] = {
     "No canary found": Fore.RED + "无金丝雀" + Fore.WHITE,
     "NX disabled": Fore.RED + "栈可运行" + Fore.WHITE,
     "NX enabled": Fore.GREEN + "栈不可运行" + Fore.WHITE,
-    "PIE enabled": Fore.GREEN + "开启位置无关保护" + Fore.WHITE,
-    "No PIE": Fore.RED + "关闭位置无关保护" + Fore.WHITE,
+    "NX unknown": Fore.RED + "栈有可能可运行" + Fore.WHITE,
+    "Executable": Fore.RED + "栈可运行" + Fore.WHITE,
+    "PIE enabled": Fore.GREEN + "随机位置(PIE)开启" + Fore.WHITE,
+    "No PIE": Fore.RED + "固定位置" + Fore.WHITE,
+    "Has RWX segments": Fore.RED +"存在可读写可执行的内存段"+ Fore.WHITE,
 }
 
 # 获取环境参数
 # 使用方法:args.pwn_path
-
-
 def getFile() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description='自动分析pwn文件工具')
     # 位置参数
@@ -64,8 +65,6 @@ def getFile() -> argparse.Namespace:
     return args
 
 # 运行命令
-
-
 def runShell(cmd: str) -> list[bytes]:
     res = subprocess.Popen(
         cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -74,8 +73,6 @@ def runShell(cmd: str) -> list[bytes]:
     return resList
 
 # 使用file命令获取文件基本信息
-
-
 def getFileInformation(file_path: str) -> list[str]:
     resStr: str = runShell(cmd="file {}".format(file_path))[0].decode()
     retList: list[str] = []
@@ -87,33 +84,33 @@ def getFileInformation(file_path: str) -> list[str]:
     return retList
 
 #  检查保护
-
-
 def checksec(file_path: str) -> list[str]:
     resList_raw: list[bytes] = runShell(
         cmd="checksec --file={}".format(file_path))
-    resStr: str = ""
+    
+    resList:list[str] = []
     for i in resList_raw:
-        resStr += i.decode()
+        resList.append(i.decode())
 
     retList: list[str] = []
-    for i in fileProtectionInformationDict:
-        if i in resStr:
-            print("{:20} => {}".format(
-                i, fileProtectionInformationDict.get(i, "未知参数")))
-            retList.append(i)
+
+    for i in resList:
+        for x in fileProtectionInformationDict:
+            if x in i:
+                print("{:50}=> {}".format(i.strip("\n"),fileProtectionInformationDict.get(x,"未找到")))
+                retList.append(x)
+                break
+        else:
+            print("{:50}=> {}".format(i.strip("\n"),"未找到"))
+
     return retList
 
 # 检查动态库并且进行修补
-
-
 def setLibcFile(args: argparse.Namespace) -> None:
     print("修补libc文件中")
     runShell(cmd="patchelf --set-interpreter {} {}".format(args.file_path, args.os))
 
 # 检查链接文件并且进行修补
-
-
 def setLinkFile(args: argparse.Namespace) -> None:
     print("修补链接文件中")
     resList: list[bytes] = runShell(cmd="ldd {}".format(args.file_path))
@@ -125,8 +122,6 @@ def setLinkFile(args: argparse.Namespace) -> None:
              args.libc, args.file_path))
 
 # 检查动态库什么的
-
-
 def ldd(args: argparse.Namespace):
     print("\n检查动态库:")
     resList: list[bytes] = runShell(cmd="ldd {}".format(args.file_path))
@@ -135,15 +130,11 @@ def ldd(args: argparse.Namespace):
     print()
 
 # 生成传参工具
-
-
 def x64tools(args: argparse.Namespace) -> None:
     print("已经生成了传参小工具在:tools.txt里")
     runShell(cmd="ROPgadget --binary {} > tools.txt".format(args.file_path))
 
 # 生成基础py文件
-
-
 def makePyFile(args: argparse.Namespace, fileList: list[str]) -> None:
 
     # 检查文件是否已存在
@@ -239,8 +230,6 @@ def runX(args: argparse.Namespace) -> None:
     runShell(cmd="chmod +x {}".format(args.file_path))
 
 # 主要运行函数
-
-
 def main() -> None:
 
     args: argparse.Namespace = getFile()
