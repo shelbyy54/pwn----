@@ -124,5 +124,5 @@ sudo apt-get install -y python3-colorama
 
 echo "搞定！,现在安装pwn小工具"
 chmod +x ./pwn.py
-sudo cp pwn.py /usr/local/bin/pwn
+sudo cp pwn.py /usr/local/bin/pwner
 echo "全部完成，记得重新启动哦"
