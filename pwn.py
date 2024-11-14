@@ -48,6 +48,8 @@ fileProtectionInformationDict: dict[str, str] = {
 
 # 获取环境参数
 # 使用方法:args.pwn_path
+
+
 def getFile() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description='自动分析pwn文件工具')
     # 位置参数
@@ -62,6 +64,8 @@ def getFile() -> argparse.Namespace:
     return args
 
 # 运行命令
+
+
 def runShell(cmd: str) -> list[bytes]:
     res = subprocess.Popen(
         cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -70,6 +74,8 @@ def runShell(cmd: str) -> list[bytes]:
     return resList
 
 # 使用file命令获取文件基本信息
+
+
 def getFileInformation(file_path: str) -> list[str]:
     resStr: str = runShell(cmd="file {}".format(file_path))[0].decode()
     retList: list[str] = []
@@ -81,9 +87,15 @@ def getFileInformation(file_path: str) -> list[str]:
     return retList
 
 #  检查保护
+
+
 def checksec(file_path: str) -> list[str]:
-    resStr: str = runShell(
-        cmd="checksec --file={}".format(file_path))[1].decode()
+    resList_raw: list[bytes] = runShell(
+        cmd="checksec --file={}".format(file_path))
+    resStr: str = ""
+    for i in resList_raw:
+        resStr += i.decode()
+
     retList: list[str] = []
     for i in fileProtectionInformationDict:
         if i in resStr:
@@ -93,11 +105,15 @@ def checksec(file_path: str) -> list[str]:
     return retList
 
 # 检查动态库并且进行修补
+
+
 def setLibcFile(args: argparse.Namespace) -> None:
     print("修补libc文件中")
     runShell(cmd="patchelf --set-interpreter {} {}".format(args.file_path, args.os))
 
 # 检查链接文件并且进行修补
+
+
 def setLinkFile(args: argparse.Namespace) -> None:
     print("修补链接文件中")
     resList: list[bytes] = runShell(cmd="ldd {}".format(args.file_path))
@@ -109,6 +125,8 @@ def setLinkFile(args: argparse.Namespace) -> None:
              args.libc, args.file_path))
 
 # 检查动态库什么的
+
+
 def ldd(args: argparse.Namespace):
     print("\n检查动态库:")
     resList: list[bytes] = runShell(cmd="ldd {}".format(args.file_path))
@@ -117,11 +135,15 @@ def ldd(args: argparse.Namespace):
     print()
 
 # 生成传参工具
+
+
 def x64tools(args: argparse.Namespace) -> None:
     print("已经生成了传参小工具在:tools.txt里")
     runShell(cmd="ROPgadget --binary {} > tools.txt".format(args.file_path))
 
 # 生成基础py文件
+
+
 def makePyFile(args: argparse.Namespace, fileList: list[str]) -> None:
 
     # 检查文件是否已存在
@@ -217,6 +239,8 @@ def runX(args: argparse.Namespace) -> None:
     runShell(cmd="chmod +x {}".format(args.file_path))
 
 # 主要运行函数
+
+
 def main() -> None:
 
     args: argparse.Namespace = getFile()
