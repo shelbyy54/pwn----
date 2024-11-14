@@ -5,11 +5,22 @@
 安装脚本也可用于ubuntu从0开始到可以打pwn的安装
 
 # 效果
+
+运行结果
+
 ![image](https://github.com/user-attachments/assets/83b9a31a-d33b-4a69-9cf8-469807395ec9)
+
+运行结果2
 
 ![image](https://github.com/user-attachments/assets/db40fe99-83c4-42d0-912c-326cd4fc5c84)
 
+生成的做题py文件
+
 ![image](https://github.com/user-attachments/assets/79d99438-19ab-4912-854c-3c10cd0e105c)
+
+生成的传参文件
+
+![image](https://github.com/user-attachments/assets/6bf684d4-8090-4e17-a640-965e130d5016)
 
 
 # 下载方法
@@ -45,7 +56,7 @@ pwner ./preshellcode
 7. 安装pwntools、ROPgadget等python库
 8. cp pwn.py /usr/local/bin/pwner
 
-pwn
+pwner
 1. file ./pwn
 2. checksec --file=./pwn
 3. chmod +x ./pwn
