@@ -45,6 +45,7 @@ sudo ./install.sh
 #查看示例
 pwner ./lockedshell
 pwner ./preshellcode
+pwner ./prelibc --setLibc=./libc.so.6 --setOS=./ld-linux-x86-64.so.2
 ```
 
 # 具体干了什么
