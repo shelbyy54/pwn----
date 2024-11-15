@@ -18,24 +18,54 @@ if [ "$input" == "yes" ]; then
 
 
 echo "更换源为清华源";
-NEW_SOURCES_LIST="deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble main restricted universe multiverse
-# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble main restricted universe multiverse
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble-updates main restricted universe multiverse
-# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble-updates main restricted universe multiverse
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble-backports main restricted universe multiverse
-# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble-backports main restricted universe multiverse
- 
-# 以下安全更新软件源包含了官方源与镜像站配置，如有需要可自行修改注释切换
-deb http://security.ubuntu.com/ubuntu/ noble-security main restricted universe multiverse
-# deb-src http://security.ubuntu.com/ubuntu/ noble-security main restricted universe multiverse
- 
-# 预发布软件源，不建议启用
-# deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble-proposed main restricted universe multiverse
-# # deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble-proposed main restricted universe multiverse"
 # 备份原有的sources.list文件
 cp /etc/apt/sources.list /etc/apt/sources.list.bak
 # 将新的源列表写入sources.list文件
-sudo echo "$NEW_SOURCES_LIST" > /etc/apt/sources.list
+sudo echo " " > /etc/apt/sources.list
+
+NEW_SOURCES_LIST="Types: deb
+URIs: https://mirrors.tuna.tsinghua.edu.cn/ubuntu
+Suites: noble noble-updates noble-backports
+Components: main restricted universe multiverse
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+
+# 默认注释了源码镜像以提高 apt update 速度，如有需要可自行取消注释
+# Types: deb-src
+# URIs: https://mirrors.tuna.tsinghua.edu.cn/ubuntu
+# Suites: noble noble-updates noble-backports
+# Components: main restricted universe multiverse
+# Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+
+# 以下安全更新软件源包含了官方源与镜像站配置，如有需要可自行修改注释切换
+Types: deb
+URIs: http://security.ubuntu.com/ubuntu/
+Suites: noble-security
+Components: main restricted universe multiverse
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+
+# Types: deb-src
+# URIs: http://security.ubuntu.com/ubuntu/
+# Suites: noble-security
+# Components: main restricted universe multiverse
+# Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+
+# 预发布软件源，不建议启用
+
+# Types: deb
+# URIs: https://mirrors.tuna.tsinghua.edu.cn/ubuntu
+# Suites: noble-proposed
+# Components: main restricted universe multiverse
+# Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+
+# # Types: deb-src
+# # URIs: https://mirrors.tuna.tsinghua.edu.cn/ubuntu
+# # Suites: noble-proposed
+# # Components: main restricted universe multiverse
+# # Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg"
+# 备份原有的sources.list文件
+cp /etc/apt/sources.list.d/ubuntu.sources /etc/apt/sources.list.d/ubuntu.sources.bak
+# 将新的源列表写入sources.list文件
+sudo echo "$NEW_SOURCES_LIST" > /etc/apt/sources.list.d/ubuntu.sources
 
 # 更新软件源列表
 sudo apt update -y
@@ -55,7 +85,6 @@ sudo update-locale LANG=zh_CN.UTF-8
 sudo apt install -y ibus
 sudo apt install -y ibus-pinyin
 echo "安装中文和中文输入法完毕";
- 
 
 echo "安装python、gcc等基础编译环境";
 sudo apt install -y python3 python3-pip python3-dev
@@ -63,8 +92,6 @@ sudo apt install -y gcc g++
 sudo apt install -y gdb
 echo "Python、GCC、调试工具已安装完毕。"
 sudo apt-get install -y gcc-multilib 
-
-
 
 echo "安装pwn工具等";
 pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
@@ -89,10 +116,7 @@ sudo apt-get install -y python3-ast
 sudo apt-get install -y python3-subprocess
 sudo apt-get install -y python3-colorama
 
-
-
-
 echo "搞定！,现在安装pwn小工具"
-chmod +x ./pwn.py
-sudo cp pwn.py /usr/local/bin/pwner
+chmod +x ./pwner.py
+sudo cp pwner.py /usr/local/bin/pwner
 echo "全部完成，记得重新启动哦"
