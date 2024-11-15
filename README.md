@@ -2,17 +2,28 @@
 
 随手写的，写的不好请轻喷.
 一个用于ctf对Pwn题目文件进行信息收集，打包了检查文件类型、检查类型保护、新建py文件、寻找传参工具的过程。
-安装脚本也可用于ubuntu从0开始到可以打pwn的安装
+同时可以修补题目给出的动态库和libc文件保证本体环境和远程一样。
+
+
+安装脚本会自动安装所需要的依赖（一路确定即可）
+完整安装脚本也可用于ubuntu从0开始到可以打pwn的安装
 
 # 效果
 
 运行结果
 
-![image](https://github.com/user-attachments/assets/83b9a31a-d33b-4a69-9cf8-469807395ec9)
+![image](https://github.com/user-attachments/assets/7147fd53-b3d3-4197-9a05-525bb8f7b8ef)
+
 
 运行结果2
 
-![image](https://github.com/user-attachments/assets/db40fe99-83c4-42d0-912c-326cd4fc5c84)
+![image](https://github.com/user-attachments/assets/158c3d84-2447-4363-a9c8-baba96a7ba85)
+
+修补文件
+
+![image](https://github.com/user-attachments/assets/221fe35a-a8cb-49d6-9fa7-16eaf8be18d6)
+
+
 
 生成的做题py文件
 
@@ -29,21 +40,12 @@ git clone https://github.com/shelbyy54/pwnerTool.git
 
 cd ./pwnerTool
 
-lsb_release -a
-#查看ubuntu版本
-```
-![image](https://github.com/user-attachments/assets/9b41646f-469b-453d-8c81-70efa3dd5e19)
-
-```
-#ubuntu 24.04 以后
-sudo install.sh
-
-#ubuntu 24.04 以前
-sudo install_old.sh
+sudo ./install.sh
 
 #查看示例
 pwner ./lockedshell
 pwner ./preshellcode
+pwner ./prelibc --setLibc=./libc.so.6 --setOS=./ld-linux-x86-64.so.2
 ```
 
 # 具体干了什么
@@ -54,19 +56,26 @@ pwner ./preshellcode
 5. 安装python、gcc等基础编译环境
 6. 安装pwn工具等
 7. 安装pwntools、ROPgadget等python库
-8. cp pwn.py /usr/local/bin/pwner
+8. cp pwner.py /usr/local/bin/pwner
 
-pwner
+pwner运行原理
 1. file ./pwn
 2. checksec --file=./pwn
 3. chmod +x ./pwn
 4. ldd ./pwn
 
 # 使用方法
+1. 查看pwn题目文件信息并且生成脚本
 ```
 cd 题目文件路径
 pwner ./pwn
 ```
+2. 修补文件
+~~~
+cd 题目文件路径
+pwner ./pwn --setOS ./动态库文件
+pwner ./pwn --setLib ./libc文件
+~~~
 
 # 卸载
 ```
