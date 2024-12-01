@@ -1,4 +1,4 @@
-# CTF中自动对Pwn题目文件进行信息收集，并且生成基础做题py文件的Pwn工具
+# CTF中自动对Pwn题目文件进行信息收集，并且生成基础做题py文件的Pwn工具，适用于Ubuntu
 
 随手写的，写的不好请轻喷.
 一个用于ctf对Pwn题目文件进行信息收集，打包了检查文件类型、检查类型保护、新建py文件、寻找传参工具的过程。
@@ -39,7 +39,7 @@
 git clone https://github.com/shelbyy54/pwnerTool.git
 
 cd ./pwnerTool
-
+chmod +x ./install.sh
 sudo ./install.sh
 
 #查看示例
@@ -47,7 +47,27 @@ pwner ./lockedshell
 pwner ./preshellcode
 pwner ./prelibc --setLibc=./libc.so.6 --setOS=./ld-linux-x86-64.so.2
 ```
+如果有直接从零开始安装的需求
+```
+git clone https://github.com/shelbyy54/pwnerTool.git
 
+cd ./pwnerTool
+chmod +x ./completeInstallation.sh
+chmod +x ./completeInstallation_old.sh
+
+lsb_release -a
+
+#Ubuntu 20.4以上用这个
+sudo ./completeInstallation.sh
+
+#Ubuntu 20.4以下用这个
+sudo ./completeInstallation_old.sh
+
+#查看示例
+pwner ./lockedshell
+pwner ./preshellcode
+pwner ./prelibc --setLibc=./libc.so.6 --setOS=./ld-linux-x86-64.so.2
+```
 # 具体干了什么
 安装脚本：
 1. 更换源为清华源
