@@ -222,11 +222,11 @@ def checkDynamicLibraries(pwnFilePath: str):
 # 替换动态库或链接器
 
 
-def setDynamicLibraries(pwnFilePath: str, libPath: str = None, osPath: str = None):
-    if libPath:
-        logWarning(f"正在替换 libc 动态库为: {libPath}")
+def setDynamicLibraries(pwnFilePath: str, libcPath: str = None, osPath: str = None):
+    if libcPath:
+        logWarning(f"正在替换 libc 动态库为: {libcPath}")
         runShellCmd(
-            args=f"patchelf --replace-needed libc.so.6 {libPath} {pwnFilePath}")
+            args=f"patchelf --replace-needed libc.so.6 {libcPath} {pwnFilePath}")
     if osPath:
         logWarning(f"正在替换操作系统动态库为: {osPath}")
         runShellCmd(args=f"patchelf --set-interpreter {osPath} {pwnFilePath}")
@@ -245,6 +245,7 @@ def main():
     generatePyFile(args.pwnFilePath,fileInfoList)
     if args.setLib or args.setOS:
         setDynamicLibraries(args.pwnFilePath, args.setLib, args.setOS)
+    generateX64ROPArgsToolFile(args.pwnFilePath)
 
 
 if __name__ == "__main__":
